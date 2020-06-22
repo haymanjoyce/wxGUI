@@ -3,44 +3,39 @@
 import wx
 
 
-class Frame(wx.Frame):
-    def __init__(self, parent=None):
-        super().__init__(parent)
+class TreeCtrl(wx.TreeCtrl):
 
-        # self.parent = None
-        # self.id = wx.ID_AUTO_LOWEST
-        self.title = 'cG'
-        self.pos = wx.DefaultPosition
-        self.size = wx.DefaultSize
-        self.style = wx.DEFAULT_FRAME_STYLE
-
-        panel = wx.Panel(self, -1)
-
-        button = wx.Button(panel, 1003, "Close me")
-        button.SetPosition((20, 20))
-        self.Bind(wx.EVT_BUTTON, self.on_close_frame, button)
-        self.Bind(wx.EVT_CLOSE, self.on_close_window)
-        tree = TreeControl(panel)
-
-    def on_close_frame(self, event):
-        self.Close(True)
-
-    def on_close_window(self, event):
-        self.Destroy()
+    def __init__(self, parent, id, pos, size, style):
+        wx.TreeCtrl.__init__(self, parent, id, pos, size, style)
 
 
-class TreeControl(wx.TreeCtrl):
+class TreePanel(wx.Panel):
+
     def __init__(self, parent):
-        super().__init__(parent)
-        self.init()
+        wx.Panel.__init__(self, parent)
 
-    def init(self):
-        pass
+        self.tree = TreeCtrl(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TR_HAS_BUTTONS | wx.TR_EDIT_LABELS)
+
+        self.root = self.tree.AddRoot('Something goes here')
+        self.tree.SetPyData(self.root, ('key', 'value'))
+        os = self.tree.AppendItem(self.root, 'Operating Systems')
+        self.tree.Expand(self.root)
+
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer.Add(self.tree, 0, wx.EXPAND)
+        self.SetSizer(sizer)
+
+
+class Frame(wx.Frame):
+
+    def __init__(self):
+        wx.Frame.__init__(self, parent=None, title='cG')
+        panel = TreePanel(self)
+        self.Show()
 
 
 if __name__ == '__main__':
-    app = wx.App()
+    app = wx.App(redirect=False)
     frame = Frame()
-    frame.Show()
     app.MainLoop()
 

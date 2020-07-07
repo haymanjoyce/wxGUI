@@ -25,12 +25,11 @@ class ListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin, listmix.TextEditMixi
         listmix.TextEditMixin.__init__(self)
 
         self.insert_columns()
-        self.insert_items(len(listctrldata))
-        self.set_items(listctrldata.items())
+        self.insert_rows(len(listctrldata))
+        self.import_data(listctrldata.items())
+        self.resize_columns()
         self.currentItem = 0
-        self.SetColumnWidth(0, wx.LIST_AUTOSIZE)
-        self.SetColumnWidth(1, wx.LIST_AUTOSIZE)
-        self.SetColumnWidth(2, 100)
+        self.export_data()
 
     def insert_columns(self):
         self.InsertColumn(0, "Column 1")
@@ -40,18 +39,31 @@ class ListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin, listmix.TextEditMixi
         self.InsertColumn(4, "Len 2", wx.LIST_FORMAT_RIGHT)
         self.InsertColumn(5, "Len 3", wx.LIST_FORMAT_RIGHT)
 
-    def insert_items(self, quantity):
+    def resize_columns(self):
+        self.SetColumnWidth(0, wx.LIST_AUTOSIZE)
+        self.SetColumnWidth(1, wx.LIST_AUTOSIZE)
+        self.SetColumnWidth(2, 100)
+
+    def insert_rows(self, quantity):
         for row in range(quantity):
             self.InsertItem(row, 0)
 
-    def set_items(self, items):
+    def import_data(self, data):
         row = 0
-        for key, data in items:
-            self.SetItem(row, 0, data[0])
-            self.SetItem(row, 1, data[1])
-            self.SetItem(row, 2, data[2])
+        for key, value in data:
+            self.SetItem(row, 0, value[0])
+            self.SetItem(row, 1, value[1])
+            self.SetItem(row, 2, value[2])
             self.SetItemData(row, key)
             row += 1
+
+    def export_data(self):
+        data = {}
+        cols = self.GetColumnCount()
+        rows = self.GetItemCount()
+        for row in range(rows):
+            data[row] = [self.GetItem(row, col).GetText() for col in range(cols)]
+        return data
 
     def SetStringItem(self, index, col, data):
         if col in range(3):

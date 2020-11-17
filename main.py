@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
-# todo how export data
+# todo button to trigger update
+# todo field to identify source file (like a browser)
+# todo fields with globals
 
 import wx
 import wx.lib.mixins.listctrl as listmix
